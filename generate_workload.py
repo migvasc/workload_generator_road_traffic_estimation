@@ -147,16 +147,19 @@ def build_networkx_from_dag(dag):
     return(digraph)
 
 def generate_workload(place,index,amount_requests,n_hops,path_computing_infra,output_path):
+    
     req_generated = 0
+    street_graph = build_street_graph(place)    
+    dict_busstops = create_clusters_df(street_graph,path_computing_infra)
+
     while (req_generated < amount_requests):
         try:
-            street_graph = build_street_graph(place)    
             offset = randint(0, len(street_graph.nodes))
             path_ex =  generate_path(street_graph,offset,n_hops)
             print('Route: ',path_ex)
             dag = build_parent_graph(street_graph,path_ex)    
             if len(dag) == 0: continue
-            dict_busstops = create_clusters_df(street_graph,path_computing_infra)
+            
             digraph = nx.DiGraph()
             for son in dag:
                 for parent in dag[son]:
